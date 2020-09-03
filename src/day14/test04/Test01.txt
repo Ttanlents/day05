@@ -1,0 +1,9 @@
+1.请说出异常的继承体系？
+ 异常的父类是Throwable,他有两个继承子类 Error和Exception
+ Error: jvm严重错误，error,无法处理的错误
+ Exception 包含检查异常和运行时异常
+        checked :编译时期就会检查
+ RuntimeException:
+ 程序产生的异常，可以通过代码处理，
+                    或者捕获异常让程序继续执行
+

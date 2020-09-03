@@ -1,0 +1,117 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="file:/C:/Users/FT/.markdownNavigator/multimarkdown_layout.css">
+    <style>
+
+        body.multimarkdown-preview,
+        body.multimarkdown-wiki-preview {
+            font-size: 11px;
+        }
+    </style>
+    <link rel="stylesheet" href="file:/C:/Users/FT/.markdownNavigator/multimarkdown_darcula.css">
+</head>
+<body class="multimarkdown-preview">
+<div class="content">
+    <div class="page-header">Readme.md</div>
+    <div class="hr"></div>
+    <p md-pos="0-34"><strong md-pos="2-15">day07  ---笔记本</strong>
+        <em md-pos="19-32"><strong md-pos="21-30">一.String类</strong></em></p>
+    <ul>
+        <li md-pos="40-59">java.lang,String</li>
+        <li md-pos="60-110">String类代表常量字符串，java程序中的所有字符串字面值（&quot;abc&quot;）都作为该类实例实现</li>
+        <li md-pos="111-138">
+    <pre md-pos="117-138"><code md-pos="117-138"> 所有用引号起来的都是String 对象
+</code></pre>
+        </li>
+        <li md-pos="139-150">
+    <pre md-pos="145-150"><code md-pos="145-150"> 特点：
+</code></pre>
+        </li>
+        <li md-pos="151-181">
+    <pre md-pos="157-181"><code md-pos="157-181"> 1.字符串是常量，他们的值在创建之后不能更改
+</code></pre>
+        </li>
+        <li md-pos="182-214">
+    <pre md-pos="188-214"><code md-pos="188-214"> 2.因为String对象是不可变的，所以可以共享
+</code></pre>
+        </li>
+        <li md-pos="215-216"></li>
+        <li md-pos="218-230">
+    <pre md-pos="224-230"><code md-pos="224-230">构造方法：
+</code></pre>
+        </li>
+        <li md-pos="231-254">String() 创建一个空字符串</li>
+        <li md-pos="255-292">String(String original) 根据字符串创建</li>
+        <li md-pos="293-328">String(char[] value) 根据字符数组创建</li>
+        <li md-pos="329-372">String(byte[] bytes) 通过字节数组来构造新的字符串对象</li>
+        <li md-pos="373-436">String(byte[] bytes,int off,int length) 根据字节数组的一部分构造新的字符串</li>
+        <li md-pos="437-438"></li>
+        <li md-pos="440-475">注意事项：基本数据类型比较的是内容，引用类型比较的是地址值</li>
+        <li md-pos="476-514">
+    <pre md-pos="482-514"><code md-pos="482-514">         1.拼接字符串会生成一个新的String对象
+</code></pre>
+        </li>
+    </ul>
+    <p md-pos="516-537">*** 二.equals()方法。***</p>
+    <ul>
+        <li md-pos="539-547">内容比较：</li>
+        <li md-pos="548-607">
+    <pre md-pos="554-607"><code md-pos="554-607"> 1.String 中的public boolean equals(Object anObject)方法
+</code></pre>
+        </li>
+        <li md-pos="608-646">
+    <pre md-pos="614-646"><code md-pos="614-646"> 2.&quot;&quot;.equalsIgnoreCase() 忽略大小写。
+</code></pre>
+        </li>
+        <li md-pos="647-662">建议调用方法格式：</li>
+        <li md-pos="663-694">
+    <pre md-pos="669-694"><code md-pos="669-694">         “xxx”.equals();
+</code></pre>
+        </li>
+    </ul>
+    <p md-pos="696-710">*** 三.常用方法***</p>
+    <ul>
+        <li md-pos="711-728">String 中常用的方法：</li>
+        <li md-pos="729-747">length(); 返回长度</li>
+        <li md-pos="748-767">concat();拼接字符串；</li>
+        <li md-pos="768-785">charAt();定位内容</li>
+        <li md-pos="786-804">indexof();定位下标</li>
+        <li md-pos="805-861">substring();返回一个字符串，从beginIndex 到endIndex 截取字符串，左闭右开</li>
+        <li md-pos="862-881">
+    <pre md-pos="868-881"><code md-pos="868-881"> 不包含endindex
+</code></pre>
+        </li>
+        <li md-pos="882-901">
+            <ul>
+                <li md-pos="890-901">转换功能的方法：</li>
+            </ul>
+        </li>
+        <li md-pos="902-951">
+    <pre md-pos="908-951"><code md-pos="908-951"> public char[] toCharArray()将此字符串转换为新的字符数组
+</code></pre>
+        </li>
+        <li md-pos="952-1003">
+    <pre md-pos="958-1003"><code md-pos="958-1003"> public getbytes(); 使用平台默认的字符集，将字符串转化为新的字节数组
+</code></pre>
+        </li>
+        <li md-pos="1004-1052">
+    <pre md-pos="1010-1052"><code md-pos="1010-1052"> tolowerCase(); 使用默认的语言环境的规则，将String转化为小写
+</code></pre>
+        </li>
+        <li md-pos="1053-1093">
+    <pre md-pos="1059-1093"><code md-pos="1059-1093"> toUpperCase();转化为大写，使用默认的语言环境规则。
+</code></pre>
+        </li>
+        <li md-pos="1094-1181">
+    <pre md-pos="1100-1181"><code md-pos="1100-1181"> replace(CharSequence target,CharSequence replacement)将所有字目标String字符串的，转化为指定的字符串
+</code></pre>
+        </li>
+        <li md-pos="1182-1213">
+    <pre md-pos="1188-1213"><code md-pos="1188-1213"> split(&quot;,&quot;);将字符串分割为字符串数组
+</code></pre>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

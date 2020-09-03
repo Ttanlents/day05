@@ -1,0 +1,3 @@
+1. 请描述以下方式创建线程的步骤。 继承Thread类方式 实现Runnable接口方式
+    (1)继承Thread类，重写run方法，创建对象和调用start方法开启线程
+    （2）实现Runable接口，重写run方法，创建Thread对象，将实现类带入，让Thread代理，调用start方法开启线程

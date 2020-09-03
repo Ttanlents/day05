@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+    /*var message=prompt("请输入数字!");
+    if (message>=12||message<=6) {
+        alert("上午好！")
+    }
+    var num1=prompt("请输入一个数字!");
+    var num2=prompt("请输入一个数1")
+    if (num1>num2){
+        alert(num1)
+    } else {
+        alert(num2)
+    }*/
+    function getDate() {
+        var mydate = new Date('2020-8-14 13:25:56');
+        var year = mydate.getFullYear()
+        var month=mydate.getMonth()+1;
+        var day=mydate.getDate()
+        var  hour=mydate.getHours();
+        var minutes=mydate.getMinutes()
+        var second=mydate.getSeconds()
+        alert(year+" "+month+" "+day)
+        alert("现在时间："+hour+" :"+minutes+": "+second)
+        alert(+new Date())
+            }
+
+    getDate();
+</script>
+</html>

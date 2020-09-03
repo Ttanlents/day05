@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1><a href="#day10权限修饰符内部类lambda表达式" id="day10权限修饰符内部类lambda表达式">day10【权限修饰符、内部类、Lambda表达式】</a></h1>
+<h1><a href="#今日内容" id="今日内容">【今日内容】</a></h1>
+<ul>
+    <li><strong>掌握final关键字的使用</strong></li>
+    <li><strong>掌握Java中的权限修饰符</strong></li>
+    <li><strong>掌握匿名内部类</strong></li>
+    <li><strong>掌握Jdk1.8新特性：Lambad表达式</strong></li>
+</ul>
+<hr />
+<h1><a href="#第一章-final关键字" id="第一章-final关键字">第一章 final关键字</a></h1>
+<h2><a href="#11-概述" id="11-概述">1.1 概述</a></h2>
+<p>学习了继承后，我们知道，子类可以在父类的基础上改写父类内容，比如，方法重写。那么我们能不能随意的继承
+    API中提供的类，改写其内容呢？显然这是不合适的。为了避免这种随意改写的情况，Java提供了 final 关键字，
+    用于修饰不可<strong>改变</strong>内容。</p>
+<ul>
+    <li><strong>final</strong>： 不可改变。可以用于修饰类、方法和变量。
+        <ul>
+            <li><strong>类</strong>：被修饰的类，不能被继承。</li>
+            <li><strong>方法</strong>：被修饰的方法，不能被重写。</li>
+            <li><strong>变量</strong>：被修饰的变量，不能被重新赋值。</li>
+        </ul>
+    </li>
+</ul>
+<h2><a href="#12-使用方式" id="12-使用方式">1.2 使用方式</a></h2>
+<h3><a href="#修饰类" id="修饰类">修饰类</a></h3>
+<p>final修饰的类，不能被继承。</p>
+<p>格式如下：</p>
+<pre><code class="java">final class Fu{
+
+}
+class Zi extends Fu{}		//被final修饰的类不能被继承
+</code></pre>
+<p>查询API发现像 <code>public final class String</code> 、 <code>public final class Math</code> 、 <code>public final class Scanner</code>
+    等，很多我们学习过的类，都是被final修饰的，目的就是供我们使用，而不让我们所以改变其内容。</p>
+<h3><a href="#修饰方法" id="修饰方法">修饰方法</a></h3>
+<p>final修饰的方法，不能被重写。 格式如下：</p>
+<p>格式：</p>
+<pre><code class="java">修饰符 final 返回值类型 方法名(参数列表){
+    //方法体
+}
+</code></pre>
+<p>代码：</p>
+<pre><code class="java">class Fu{
+    public void show1(){
+
+    }
+    public final void show2(){          //加了final修饰的方法不能被子类重写
+
+    }
+}
+class Zi extends Fu{
+    @Override
+    public void show1(){
+
+    }
+/*
+    public void show2(){        //不能重写final修饰的方法
+
+    }
+    */
+}
+</code></pre>
+<h3><a href="#修饰变量" id="修饰变量">修饰变量</a></h3>
+<ol>
+    <li>
+        <p><strong>局部变量——基本类型</strong></p>
+        <p>基本类型的局部变量，被final修饰后，只能赋值一次，不能再更改。代码如下：</p>
+    </li>
+</ol>
+<pre><code class="java">public static void main(String[] args) {
+
+    //声明成员变量,使用final修饰
+    final int a;
+    //第一次赋值
+    a=10;
+
+    //第二次赋值
+    //        a=20;           //报错,不能重新赋值
+
+    //声明变量，直接赋值
+    final int b=10;
+
+    //第二次赋值
+    //b=20;       //报错,被final修饰的变量不能直接赋值
+
+}
+</code></pre>
+<p>思考，如下两种写法，哪种可以通过编译？</p>
+<p>写法1：</p>
+<pre><code class="java">final int c=0;
+for(int i=0;i&lt;10;i++){
+    c=i;
+    System.out.println(c);
+}
+</code></pre>
+<p>写法2：</p>
+<pre><code class="java">for(int i=0;i&lt;10;i++){
+    final int c=i;
+    System.out.println(c);
+}
+</code></pre>
+<p>根据 <code>final</code> 的定义，写法1报错！写法2，为什么通过编译呢？因为每次循环，都是一次新的变量c。这也是大家
+    需要注意的地方。</p>
+<ol start="2">
+    <li>
+        <p><strong>局部变量——引用类型</strong></p>
+        <p>引用类型的局部变量，被<code>final</code>修饰后，只能指向一个对象，地址不能再更改。但是不影响对象内部的成员变
+            量值的修改，代码如下：</p>
+    </li>
+</ol>
+<pre><code class="java">public static void main(String[] args) {
+    //创建Person对象
+    final Person p=new Person();
+    //        p=new Person();       //被final修饰的对象不可指向其他地址值
+    p.setName(&quot;张三&quot;);        //可以修改此对象的属性值
+}
+</code></pre>
+<ol start="3">
+    <li>
+        <p><strong>成员变量</strong></p>
+        <p>成员变量涉及到初始化的问题，初始化方式有两种，只能二选一：</p>
+    </li>
+</ol>
+<ul>
+    <li>显示初始化(在定义成员变量的时候立马赋值)；</li>
+</ul>
+<pre><code class="java">public class Student{
+    final int num=10;
+}
+</code></pre>
+<ul>
+    <li>构造方法初始化(在构造方法中赋值一次)。</li>
+</ul>
+<pre><code class="java">class Student{
+    final int num=10;
+    final int num2;
+    public Student (){
+        this.num2=20;
+        //赋值一次后，不可再次赋值
+//        this.num2=30;
+    }
+    public Student(int i){      //如果有多个构造方法,那么所有的构造方法中必须都得给num2赋值
+        this.num2=30;
+    }
+}
+</code></pre>
+<blockquote>
+    <p>被final修饰的常量名称，一般都有书写规范，所有字母都<strong>大写</strong>。</p>
+</blockquote>
+<h1><a href="#第二章-权限修饰符" id="第二章-权限修饰符">第二章 权限修饰符</a></h1>
+<h2><a href="#21-概述" id="21-概述">2.1 概述</a></h2>
+<p>在Java中提供了四种访问权限，使用不同的访问权限修饰符修饰时，被修饰的内容会有不同的访问权限，</p>
+<ul>
+    <li>
+        <p>public：公共的。</p>
+    </li>
+    <li>
+        <p>protected：受保护的</p>
+    </li>
+    <li>
+        <p>default：默认的</p>
+    </li>
+    <li>
+        <p>private：私有的</p>
+        <p><code>public &gt; protected &gt; 默认 &gt; private</code></p>
+    </li>
+</ul>
+<h2><a href="#22-不同权限的访问能力" id="22-不同权限的访问能力">2.2 不同权限的访问能力</a></h2>
+<table>
+    <thead>
+    <tr><th>              </th><th> public </th><th> protected </th><th> default </th><th> private </th></tr>
+    </thead>
+    <tbody>
+    <tr><td> 同一类中         </td><td> √      </td><td> √         </td><td> √       </td><td> √       </td></tr>
+    <tr><td> 同一包中(子类或任意类) </td><td> √      </td><td> √         </td><td> √       </td><td>         </td></tr>
+    <tr><td> 不同包的子类       </td><td> √      </td><td> √         </td><td>         </td><td>         </td></tr>
+    <tr><td> 不同包的任意类      </td><td> √      </td><td>           </td><td>         </td><td>         </td></tr>
+    </tbody>
+</table>
+<p>可见，<code>public</code>具有最大权限。<code>private</code>则是最小权限。</p>
+<p>编写代码时，如果没有特殊的考虑，建议这样使用权限：</p>
+<ul>
+    <li>成员变量使用 <code>private</code> ，隐藏细节。</li>
+    <li>构造方法使用 <code>public</code> ，方便创建对象。</li>
+    <li>成员方法使用 <code>public</code> ，方便调用方法。</li>
+</ul>
+<blockquote>
+    <p>小贴士：不加权限修饰符，就是default权限</p>
+</blockquote>
+<h1><a href="#第三章-内部类" id="第三章-内部类">第三章 内部类</a></h1>
+<p>以前2个类是独立分开定义的</p>
+<p><img src="img/1.png" alt="" /></p>
+<h2><a href="#11-概述-1" id="11-概述-1">1.1 概述</a></h2>
+<h3><a href="#什么是内部类" id="什么是内部类">什么是内部类</a></h3>
+<p>将一个类A定义在另一个类B里面，里面的那个类A就称为<strong>内部类</strong>，B则称为<strong>外部类</strong>。</p>
+<h3><a href="#什么时候使用内部类" id="什么时候使用内部类">什么时候使用内部类</a></h3>
+<p>一个事物内部还有一个独立的事物，内部的事物脱离外部的事物无法独立使用</p>
+<ol>
+    <li>人里面有一颗心脏</li>
+    <li>汽车内部有一个发动机</li>
+</ol>
+<h3><a href="#内部类的分类" id="内部类的分类">内部类的分类</a></h3>
+<p>按定义的位置来分</p>
+<ol>
+    <li><strong>成员内部类</strong>，类定义在了成员位置 (类中方法外称为成员位置)</li>
+    <li><strong>局部内部类</strong>，类定义在方法内</li>
+</ol>
+<h3><a href="#成员内部类" id="成员内部类">成员内部类</a></h3>
+<ul>
+    <li><strong>成员内部类</strong> ：定义在<strong>类中方法外</strong>的类。</li>
+</ul>
+<p>定义格式：</p>
+<pre><code class="java">class 外部类{
+    // 成员变量
+    // 成员方法
+    class 内部类{
+        // 成员变量
+        // 成员方法
+    }
+}
+</code></pre>
+<p>在描述事物时，若一个事物内部还包含其他事物，就可以使用内部类这种结构。比如，汽车类 <code>Car</code> 中包含发动机
+    类 <code>Engine</code> ，这时， <code>Engine</code> 就可以使用内部类来描述，定义在成员位置。</p>
+<p>代码举例：</p>
+<pre><code class="java">class Car{			//外部类
+    class Engine{		//内部类
+
+    }
+}
+</code></pre>
+<h3><a href="#访问特点" id="访问特点">访问特点</a></h3>
+<p>内部类可以直接访问外部类的成员，包括私有成员。</p>
+<p>创建内部类对象格式：</p>
+<pre><code class="java">外部类名.内部类名 对象名 = new 外部类型().new 内部类型();
+</code></pre>
+<p>访问演示，代码如下：</p>
+<p>定义类：</p>
+<pre><code class="java">class Body{
+    public Boolean live=true;
+
+    public void walk(){
+        System.out.println(&quot;散步&quot;);
+    }
+    class Heart{
+        public void jump(){
+            if(live){
+                System.out.println(&quot;心脏在跳动&quot;);
+            }else{
+                System.out.println(&quot;心脏不跳了&quot;);
+            }
+        }
+    }
+}
+</code></pre>
+<p>测试类：</p>
+<pre><code class="java">public class Demo1 {
+    public static void main(String[] args) {
+        //创建内部类，第一种方式：
+        Body.Heart h=new Body().new Heart();
+        h.jump();
+
+        //第二种方式：
+        //先创建外部类
+        Body b=new Body();
+
+        //通过外部类对象再创建内部类对象
+        Body.Heart h2=b.new Heart();
+        b.live=false;
+        h2.jump();
+
+    }
+}
+输出结果：
+心脏在跳动
+心脏不跳了
+</code></pre>
+<blockquote>
+    <p>内部类仍然是一个独立的类，在编译之后会内部类会被编译成独立的.class文件，但是前面冠以外部类的类名
+        和$符号 。</p>
+    <p>比如，Body$Heart.class</p>
+</blockquote>
+<h3><a href="#成员内部类面试题" id="成员内部类面试题">成员内部类面试题</a></h3>
+<p>请在?地方向上相应代码,以达到输出的内容</p>
+<pre><code class="java">public class Demo1 {
+    public static void main(String[] args) {
+        Body.Heart h=new Body().new Heart();
+        h.jump();
+    }
+}
+
+class Body {
+    private int num = 10;
+
+    class Heart {
+        private int num = 20;
+
+        public void jump() {
+            int num = 30;
+            System.out.println(&quot;心脏在跳动 &quot; + Body.this.num);       //10
+            System.out.println(&quot;心脏在跳动 &quot; + this.num);       //20
+            System.out.println(&quot;心脏在跳动 &quot; + num);       //30
+        }
+    }
+}
+</code></pre>
+<h3><a href="#局部内部类" id="局部内部类">局部内部类</a></h3>
+<ul>
+    <li><strong>局部内部类</strong> ：定义在方法中的类。</li>
+</ul>
+<p>定义格式：</p>
+<pre><code class="java">class 外部类名 {
+    数据类型 变量名;
+    
+    修饰符 返回值类型 方法名(参数列表) {
+        // …
+        class 内部类 {
+            // 成员变量
+            // 成员方法
+        }
+    }
+}
+</code></pre>
+<p>使用方式: 在定义好局部内部类后,直接就创建对象</p>
+<h3><a href="#访问特点-1" id="访问特点-1">访问特点</a></h3>
+<ul>
+    <li>内部类可以直接访问外部类的成员，包括私有成员。</li>
+</ul>
+<p>代码示例：</p>
+<pre><code class="java">public class Demo1 {
+    public static void main(String[] args) {
+        Person p=new Person();
+        p.eat();
+    }
+}
+
+class Person {
+    private String name=&quot;凤姐&quot;;
+
+    public void eat(){
+        //筷子
+        class Chopsticks{
+
+            private int length;
+
+            public void use(){
+                //使用外部类变量
+                System.out.println(name+&quot;在使用长为&quot;+length+&quot;的筷子吃饭&quot;);
+            }
+
+            public int getLength() {
+                return length;
+            }
+
+            public void setLength(int length) {
+                this.length = length;
+            }
+        }
+        Chopsticks c=new Chopsticks();
+        c.setLength(50);
+        c.use();
+    }
+
+}
+</code></pre>
+<blockquote>
+    <p>局部内部类编译后仍然是一个独立的类，编译后有$还有一个数字。</p>
+    <p>编译后类名为：Chinese$1Chopsticks.class</p>
+</blockquote>
+<h2><a href="#12-匿名内部类重点" id="12-匿名内部类重点">1.2 匿名内部类【重点】</a></h2>
+<ul>
+    <li><strong>匿名内部类</strong> ：是内部类的简化写法。它的本质是一个 带具体实现的 父类或者父接口的 匿名的 子类对象。
+        开发中，最常用到的内部类就是匿名内部类了。</li>
+</ul>
+<p>之前我們使用接口时，似乎得做如下几步操作：</p>
+<ol>
+    <li>定义子类</li>
+    <li>重写接口中的方法</li>
+    <li>创建子类对象</li>
+    <li>调用重写后的方法</li>
+</ol>
+<pre><code class="java">public class Demo1 {
+    public static void main(String[] args) {
+
+        Person p=new Person();
+        p.swiming();
+
+    }
+}
+
+//定义游泳接口
+interface Swim{
+    void swiming();
+}
+
+//定义实现类,实现该接口
+class Person implements Swim{
+
+    @Override
+    public void swiming() {
+        System.out.println(&quot;狗刨式游泳.....&quot;);
+    }
+}
+</code></pre>
+<p>我们的目的，最终只是为了调用方法，那么能不能简化一下，把以上四步合成一步呢？匿名内部类就是做这样的快
+    捷方式。</p>
+<h3><a href="#匿名内部类前提" id="匿名内部类前提">匿名内部类前提</a></h3>
+<p>匿名内部类必须<strong>继承一个父类</strong>或者<strong>实现一个父接口</strong>。</p>
+<h3><a href="#匿名内部类格式" id="匿名内部类格式">匿名内部类格式</a></h3>
+<pre><code class="java">new 父类名或者接口名(){
+    // 方法重写
+    @Override
+    public void method() {
+        // 执行语句
+    }
+};
+</code></pre>
+<h3><a href="#使用方式" id="使用方式">使用方式</a></h3>
+<p>以接口为例，匿名内部类的使用，代码如下：</p>
+<p>创建匿名内部类，并调用：</p>
+<pre><code class="java">public class Demo1 {
+    public static void main(String[] args) {
+
+        new Swim(){
+
+            @Override
+            public void swiming() {
+                System.out.println(&quot;狗刨式游泳....&quot;);
+            }
+        }.swiming();        //狗刨式游泳....
+
+
+        //返回一个实现了swim接口的子类对象,只不过该对象是匿名的
+        Swim swim = new Swim() {
+            @Override
+            public void swiming() {
+                System.out.println(&quot;鹅划式...&quot;);
+            }
+        };
+
+        swim.swiming();     //鹅划式...
+
+    }
+}
+
+//定义游泳接口
+interface Swim{
+    void swiming();
+}
+
+//定义实现类,实现该接口
+class Person implements Swim{
+
+    @Override
+    public void swiming() {
+        System.out.println(&quot;狗刨式游泳.....&quot;);
+    }
+}
+</code></pre>
+<h3><a href="#匿名内部类的本质" id="匿名内部类的本质">匿名内部类的本质</a></h3>
+<ol>
+    <li>定义一个没有名字的内部类</li>
+    <li>这个类实现了Swim接口</li>
+    <li>创建了这个没有名字的类的对象</li>
+</ol>
+<h3><a href="#匿名内部类的作用" id="匿名内部类的作用">匿名内部类的作用</a></h3>
+<p>简化代码</p>
+<h3><a href="#匿名内部类的使用场景" id="匿名内部类的使用场景">匿名内部类的使用场景</a></h3>
+<p>通常在方法的形式参数是接口或者抽象类时，也可以将匿名内部类作为参数传递。代码如下：</p>
+<pre><code class="java">public class Demo1 {
+    public static void main(String[] args) {
+
+        //普通方法
+        Student s1=new Student();
+        swim(s1);
+
+        //使用匿名内部类方式,创建了一个匿名的类,该类实现了Swim接口
+        swim(new Swim() {
+            @Override
+            public void swiming() {
+                System.out.println(&quot;狗刨式游泳....&quot;);
+            }
+        });
+
+        swim(new Swim() {
+            @Override
+            public void swiming() {
+                System.out.println(&quot;蛙泳....&quot;);
+            }
+        });
+    }
+
+    //模拟，请一些人去游泳
+    public static void swim(Swim s){
+        s.swiming();
+    }
+
+}
+interface Swim{
+    void swiming();
+}
+
+class Student implements Swim{
+    @Override
+    public void swiming() {
+        System.out.println(&quot;自由泳.....&quot;);
+    }
+}
+</code></pre>
+<h1><a href="#第四章-引用类型用法总结" id="第四章-引用类型用法总结">第四章 引用类型用法总结</a></h1>
+<p>实际的开发中，引用类型的使用非常重要，也是非常普遍的。我们可以在理解基本类型的使用方式基础上，进一步
+    去掌握引用类型的使用方式。基本类型可以作为成员变量、作为方法的参数、作为方法的返回值，那么当然引用类
+    型也是可以的。</p>
+<h2><a href="#41-class作为成员变量" id="41-class作为成员变量">4.1 class作为成员变量</a></h2>
+<p>在定义一个类Role（游戏角色）时，代码如下：</p>
+<pre><code class="java">class Role{
+    int id;         //角色id
+    int blood;      //生命值
+    String name;    //生命角色
+
+}
+</code></pre>
+<p>使用 <code>int</code> 类型表示 角色id和生命值，使用 <code>String</code> 类型表示姓名。此时， <code>String</code> 本身就是引用类型，由于使用
+    的方式类似常量，所以往往忽略了它是引用类型的存在。如果我们继续丰富这个类的定义，给 <code>Role</code> 增加武器，穿戴装备等属性，我们将如何编写呢？</p>
+<p>定义武器类，将增加攻击能力：</p>
+<pre><code class="java">class Weapon{
+    String name;    //武器名称
+    int hurt;       //伤害值
+}
+</code></pre>
+<p>定义穿戴盔甲类，将增加防御能力，也就是提升生命值：</p>
+<pre><code class="java">class Armour{
+    String name;    //装备名称
+    int protect;    //防御值
+}
+</code></pre>
+<p>定义角色类：</p>
+<pre><code class="java">public class Demo1 {
+    public static void main(String[] args) {
+
+        //创建攻击武器
+        Weapon weapon=new Weapon(&quot;屠龙刀&quot;,999999);
+
+        //创建防御武器
+        Armour armour=new Armour(&quot;麒麟甲&quot;,10000);
+
+        //创建角色
+        Role r=new Role();
+        r.setName(&quot;张无忌&quot;);
+        r.setId(1);
+        r.setBlood(100);
+        //为角色绑定攻击武器
+        r.setWeapon(weapon);
+
+        //为角色绑定防御武器
+        r.setArmour(armour);
+
+        //攻击方法
+        r.attack();
+
+        //防御方法
+        r.wear();
+    }
+
+}
+class Role{
+    private int id;         //角色id
+    private int blood;      //生命值
+    private String name;    //生命角色
+
+    private Weapon weapon;
+    private Armour armour;
+
+    //攻击方法
+    public void attack(){
+        System.out.println(name+&quot;使用&quot;+weapon.getName()+&quot;武器,造成&quot;+weapon.getHurt()+&quot;点伤害&quot;);
+    }
+
+    //穿上盔甲
+    public void wear(){
+        System.out.println(name+&quot;穿山了&quot;+armour.getName()+&quot;,生命值增加&quot;+armour.getProtect()+&quot;点&quot;);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getBlood() {
+        return blood;
+    }
+
+    public void setBlood(int blood) {
+        this.blood = blood;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
+    }
+
+    public Armour getArmour() {
+        return armour;
+    }
+
+    public void setArmour(Armour armour) {
+        this.armour = armour;
+    }
+}
+
+class Weapon{
+    private String name;    //武器名称
+    private int hurt;       //伤害值
+
+    public Weapon(String name, int hurt) {
+        this.name = name;
+        this.hurt = hurt;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getHurt() {
+        return hurt;
+    }
+
+    public void setHurt(int hurt) {
+        this.hurt = hurt;
+    }
+}
+
+class Armour{
+    private String name;    //装备名称
+    private int protect;    //防御值
+
+    public Armour(String name, int protect) {
+        this.name = name;
+        this.protect = protect;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getProtect() {
+        return protect;
+    }
+
+    public void setProtect(int protect) {
+        this.protect = protect;
+    }
+}
+</code></pre>
+<blockquote>
+    <p>类作为成员变量时，对它进行赋值的操作，实际上，是赋给它该类的一个对象。</p>
+</blockquote>
+<h2><a href="#42-interface作为方法参数和返回值类型" id="42-interface作为方法参数和返回值类型">4.2 interface作为方法参数和返回值类型</a></h2>
+<p>当接口作为方法的参数时,需要传递什么呢？当接口作为方法的返回值类型时，需要返回什么呢？对，其实都是它的子类对象。</p>
+<pre><code class="java">public class Demo1 {
+    public static void main(String[] args) {
+
+        Swimable sw = getSwimableObj();
+        sw.swiming();
+
+    }
+
+    //随便获取一个可以游泳的对象即可
+    public static Swimable getSwimableObj(){
+
+        SwimStudent ss=new SwimStudent();
+
+        SwimTeacher st=new SwimTeacher();
+
+//        return ss;
+        return st;
+    }
+}
+//游泳接口
+interface Swimable{
+
+    void swiming();
+}
+class SwimTeacher implements Swimable{
+    @Override
+    public void swiming() {
+        System.out.println(&quot;会游泳的老师...&quot;);
+    }
+}
+class SwimStudent implements Swimable{
+    @Override
+    public void swiming() {
+        System.out.println(&quot;会游泳的学生...&quot;);
+    }
+}
+
+</code></pre>
+<h1><a href="#第五章-综合案例发红包" id="第五章-综合案例发红包">第五章 综合案例——发红包</a></h1>
+<h3><a href="#案例需求" id="案例需求">案例需求</a></h3>
+<p>分析并使用已给出的类，编写程序，设置红包类型。</p>
+<blockquote>
+    <p>小贴士 红包类型：</p>
+    <ol>
+        <li>普通红包：金额均分。不能整除的，余额添加到最后一份红包中。</li>
+        <li>手气红包：金额随机。各个红包金额累和与总金额相等。
+            红包场景： 此案例是模拟群主给群成员发红包，群主自己打开最后一个红包的场景。</li>
+    </ol>
+</blockquote>
+<h3><a href="#案例分析" id="案例分析">案例分析</a></h3>
+<ul>
+    <li><strong>普通红包</strong>：</li>
+</ul>
+<p>将所有金额平均分布，剩余的钱如果不为0作为最后一个红包</p>
+<ul>
+    <li>
+        <p><strong>手气红包【重点】</strong></p>
+        <p>本质上，手气红包就是把总金额 totalMoney 随机分成指定的 count 份，所以必须规定每一份金额的取值范
+            围。如果范围太小，可能导致后分配红包金额特别大。反之范围太大，可能导致后分配红包金额为0，不够
+            分。可见，取值范围的定义规则，是手气红包的关键所在。
+            我们规定：每一份随机金额范围（除最后一份），最小值为1，<strong>最大值为当前剩余平均金额的2倍</strong> ，单位为&quot;分&quot;。</p>
+    </li>
+</ul>
+<p>计算公式：</p>
+<pre><code class="java">当前随机红包金额范围=当前剩余金额/当前剩余红包个数*2
+</code></pre>
+<p>举例：总额为50元，发5个红包。</p>
+<p><img src="img/2.png" alt="" /></p>
+<p>红包模式接口：</p>
+<pre><code class="java">//发红包接口
+interface OpenMode{
+    ArrayList&lt;Integer&gt; faHongBao(Integer money,Integer count);
+}
+</code></pre>
+<p>普通红包：</p>
+<pre><code class="java">//普通红包类
+class Common implements OpenMode{
+
+    @Override
+    public ArrayList&lt;Integer&gt; faHongBao(Integer money, Integer count) {
+
+        /**
+         * 普通红包规则： 所用红包平均分布，最后面留下的作为最后一个红包
+         *
+         */
+        //用于存储红包
+        ArrayList&lt;Integer&gt; redPack=new ArrayList&lt;&gt;();
+        int tempMoney = money / count;
+
+        for(int i=0;i&lt;count-1;i++){
+
+            redPack.add(tempMoney);
+
+            //发完一次红包后，总金额应该减少，
+            money-=tempMoney;
+
+        }
+
+        //剩余的金额为最后一个红包
+        redPack.add(money);
+        return redPack;
+    }
+}
+</code></pre>
+<p>手气红包：</p>
+<pre><code class="java">//随机红包
+class Lucky implements OpenMode{
+
+    @Override
+    public ArrayList&lt;Integer&gt; faHongBao(Integer money, Integer count) {
+        /**
+         * 随机红包规则：
+         *
+         * 随机红包范围：(当前剩余余额/当前剩余红包个数)*2
+         *
+         */
+        //用于存储红包
+       	Random r= new Random()
+        ArrayList&lt;Integer&gt; redPack=new ArrayList&lt;&gt;();
+        for(int i=0;i&lt;count;i++){
+            int tempMoney = r.nextInt(money / count * 2) + 1;
+            redPack.add(tempMoney);
+
+            //在总余额上减去这次发掉的红包金额
+            money-=tempMoney;
+
+            //红包剩余个数减1
+            count--;
+        }
+        //剩下的钱留给最后一个红包
+        redPack.add(money);
+        return redPack;
+    }
+}
+</code></pre>
+<p>红包类：</p>
+<pre><code class="java">class RedPackage{
+    //群主名称
+    private String name;
+
+    //发红包模式
+    private OpenMode openMode;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public OpenMode getOpenMode() {
+        return openMode;
+    }
+
+    public void setOpenMode(OpenMode openMode) {
+        this.openMode = openMode;
+    }
+}
+</code></pre>
+<p>测试类：</p>
+<pre><code class="java">public class Demo1 {
+    public static void main(String[] args) {
+        RedPackage redPackage=new RedPackage();
+        redPackage.setName(&quot;群主大大&quot;);
+        //设置发红包模式,随机模式
+        redPackage.setOpenMode(new Lucky());
+
+        OpenMode openMode = redPackage.getOpenMode();
+
+        //发红包
+        ArrayList&lt;Integer&gt; luckyRedPack = openMode.faHongBao(50, 9);
+        System.out.println(redPackage.getName()+&quot;发了一个随机红包： &quot;+luckyRedPack);
+
+        //设置发红包模式,普通模式
+        redPackage.setOpenMode(new Common());
+        ArrayList&lt;Integer&gt; commonRedPack = redPackage.getOpenMode().faHongBao(10, 5);
+        System.out.println(redPackage.getName()+&quot;发了一个普通红包： &quot;+commonRedPack);
+    }
+}
+</code></pre>
+<h1><a href="#第六章-lambda表达式" id="第六章-lambda表达式">第六章 Lambda表达式</a></h1>
+<h2><a href="#61-函数式编程思想概述" id="61-函数式编程思想概述">6.1 函数式编程思想概述</a></h2>
+<p><img src="img/100.png" alt="" /></p>
+<p>在数学中，<strong>函数</strong>就是有输入量、输出量的一套计算方案，也就是“拿什么东西做什么事情”。相对而言，面向对象过分强调“必须通过对象的形式来做事情”，而函数式思想则尽量忽略面向对象的复杂语法——<strong>强调做什么，而不是以什么形式做</strong>。</p>
+<p>面向对象的思想:</p>
+<p>​	做一件事情,找一个能解决这个事情的对象,调用对象的方法,完成事情.</p>
+<p>函数式编程思想:</p>
+<p>​	只要能获取到结果,谁去做的,怎么做的都不重要,重视的是结果,不重视过程</p>
+<h2><a href="#62-简化匿名内部类" id="62-简化匿名内部类">6.2 简化匿名内部类</a></h2>
+<h3><a href="#任务案例" id="任务案例">任务案例：</a></h3>
+<p>定义一个Task接口，提供task任务方法</p>
+<pre><code class="java">package com.dfbz.task;
+
+public interface Task {
+    public void task();
+}
+
+</code></pre>
+<p>定义一个Start启动类，内部包含一个任务Task</p>
+<pre><code class="java">package com.dfbz.task;
+
+public class Start {
+    private Task task;
+
+    public Start(Task task) {
+        this.task = task;
+    }
+
+    public void run(){
+        //执行task任务
+        task.task();
+    }
+
+}
+</code></pre>
+<p>测试类：</p>
+<pre><code class="java">package com.dfbz.demo;
+
+import com.dfbz.task.Start;
+import com.dfbz.task.Task;
+
+public class Demo1 {
+    public static void main(String[] args) {
+
+        //匿名内部类写法
+        new Start(new Task() {
+            @Override
+            public void task() {
+                System.out.println(&quot;开启任务啦！&quot;);
+            }
+        }).run();
+    }
+}
+</code></pre>
+<h2><a href="#63-编程思想转换" id="63-编程思想转换">6.3 编程思想转换</a></h2>
+<h3><a href="#做什么而不是怎么做" id="做什么而不是怎么做">做什么，而不是怎么做</a></h3>
+<p>我们真的希望创建一个匿名内部类对象吗？不。我们只是为了做这件事情而<strong>不得不</strong>创建一个对象。我们真正希望做的事情是：将<code>run</code>方法体内的代码传递给<code>Thread</code>类知晓。</p>
+<p><strong>传递一段代码</strong>——这才是我们真正的目的。而创建对象只是受限于面向对象语法而不得不采取的一种手段方式。那，有没有更加简单的办法？如果我们将关注点从“怎么做”回归到“做什么”的本质上，就会发现只要能够更好地达到目的，过程与形式其实并不重要。</p>
+<h3><a href="#生活举例" id="生活举例">生活举例</a></h3>
+<p><img src="img/101.png" alt="" /></p>
+<p>当我们需要从北京到上海时，可以选择高铁、汽车、骑行或是徒步。我们的真正目的是到达上海，而如何才能到达上海的形式并不重要，所以我们一直在探索有没有比高铁更好的方式——搭乘飞机。</p>
+<p><img src="img/102.png" alt="" /></p>
+<p>而现在这种飞机（甚至是飞船）已经诞生：2014年3月Oracle所发布的Java 8（JDK 1.8）中，加入了<strong>Lambda表达式</strong>的重量级新特性，为我们打开了新世界的大门。</p>
+<h2><a href="#64-体验lambda的更优写法" id="64-体验lambda的更优写法">6.4 体验Lambda的更优写法</a></h2>
+<p>借助Java 8的全新语法，上述<code>Runnable</code>接口的匿名内部类写法可以通过更简单的Lambda表达式达到等效：</p>
+<pre><code class="java">public class Demo1 {
+    public static void main(String[] args) {
+        new Start(() -&gt; System.out.println(&quot;使用lambda表达式开启任务！&quot;)).run();
+    }
+}
+</code></pre>
+<p>这段代码和刚才的执行效果是完全一样的，可以在1.8或更高的编译级别下通过。从代码的语义中可以看出：我们启动了一个线程，而线程任务的内容以一种更加简洁的形式被指定。</p>
+<p>不再有“不得不创建接口对象”的束缚，不再有“抽象方法覆盖重写”的负担，就是这么简单！</p>
+<h2><a href="#65-回顾匿名内部类" id="65-回顾匿名内部类">6.5 回顾匿名内部类</a></h2>
+<p>Lambda是怎样击败面向对象的？在上例中，核心代码其实只是如下所示的内容：</p>
+<pre><code class="java">() -&gt; System.out.println(&quot;使用lambda表达式开启任务！&quot;)
+</code></pre>
+<p>为了理解Lambda的语义，我们需要从传统的代码起步。</p>
+<h3><a href="#使用实现类" id="使用实现类">使用实现类</a></h3>
+<p>要使用一个Start类，需要创建一个Start类的对象并调用run方法，而为了指定线程执行的内容，需要调用Start类的构造方法</p>
+<ul>
+    <li><code>public Start(Task task)</code></li>
+</ul>
+<p>为了获取Task接口的实现对象，可以为该接口提供一个实现类<code>TaskImpl</code></p>
+<pre><code class="java">package com.dfbz.task;
+
+public class TaskImpl implements Task {
+    @Override
+    public void task() {
+        System.out.println(&quot;我是使用自定义实现类方式的哦！&quot;);
+    }
+}
+</code></pre>
+<p>然后创建该实现类的对象作为<code>Start</code>类的构造参数：</p>
+<pre><code class="java">package com.dfbz.demo;
+
+import com.dfbz.task.Start;
+import com.dfbz.task.TaskImpl;
+
+public class Demo1 {
+    public static void main(String[] args) {
+        TaskImpl task=new TaskImpl();
+
+        Start start=new Start(task);
+
+        start.run();
+    }
+}
+
+</code></pre>
+<h3><a href="#使用匿名内部类" id="使用匿名内部类">使用匿名内部类</a></h3>
+<p>这个<code>TaskImpl</code>类只是为了实现<code>Task</code>接口而存在的，而且仅被使用了唯一一次，所以使用匿名内部类的语法即可省去该类的单独定义，即匿名内部类：</p>
+<pre><code class="java">package com.dfbz.demo;
+
+import com.dfbz.task.Start;
+import com.dfbz.task.Task;
+
+public class Demo1 {
+    public static void main(String[] args) {
+
+        new Start(new Task() {
+            @Override
+            public void task() {
+                System.out.println(&quot;我是使用匿名内部类方式的哦！&quot;);
+            }
+        }).run();
+    }
+}
+</code></pre>
+<h3><a href="#匿名内部类的好处与弊端" id="匿名内部类的好处与弊端">匿名内部类的好处与弊端</a></h3>
+<p>一方面，匿名内部类可以帮我们<strong>省去实现类的定义</strong>；另一方面，匿名内部类的语法——<strong>确实太复杂了！</strong></p>
+<h3><a href="#语义分析" id="语义分析">语义分析</a></h3>
+<p>仔细分析该代码中的语义，<code>Task</code>接口只有一个<code>task</code>方法的定义：</p>
+<ul>
+    <li><code>public abstract void task();</code></li>
+</ul>
+<p>即制定了一种做事情的方案（其实就是一个函数）：</p>
+<ul>
+    <li><strong>无参数</strong>：不需要任何条件即可执行该方案。</li>
+    <li><strong>无返回值</strong>：该方案不产生任何结果。</li>
+    <li><strong>代码块</strong>（方法体）：该方案的具体执行步骤。</li>
+</ul>
+<p>同样的语义体现在<code>Lambda</code>语法中，要更加简单：</p>
+<pre><code class="java">() -&gt; System.out.println(&quot;Lambda表达式方式！&quot;)
+</code></pre>
+<ul>
+    <li>前面的一对小括号即<code>run</code>方法的参数（无），代表不需要任何条件；</li>
+    <li>中间的一个箭头代表将前面的参数传递给后面的代码；</li>
+    <li>后面的输出语句即业务逻辑代码。</li>
+</ul>
+<h2><a href="#66-lambda标准格式" id="66-lambda标准格式">6.6 Lambda标准格式</a></h2>
+<p>Lambda省去面向对象的条条框框，格式由<strong>3个部分</strong>组成：</p>
+<ul>
+    <li>一些参数</li>
+    <li>一个箭头</li>
+    <li>一段代码</li>
+</ul>
+<p>Lambda表达式的<strong>标准格式</strong>为：</p>
+<pre><code>(参数类型 参数名称) -&gt; { 代码语句 }
+</code></pre>
+<p>格式说明：</p>
+<ul>
+    <li>小括号内的语法与传统方法参数列表一致：无参数则留空；多个参数则用逗号分隔。</li>
+    <li><code>-&gt;</code>是新引入的语法格式，代表指向动作。</li>
+    <li>大括号内的语法与传统方法体要求基本一致。</li>
+</ul>
+<h2><a href="#67-练习使用lambda标准格式无参无返回" id="67-练习使用lambda标准格式无参无返回">6.7 练习：使用Lambda标准格式（无参无返回）</a></h2>
+<h3><a href="#题目" id="题目">题目</a></h3>
+<p>给定一个厨子<code>Cook</code>接口，内含唯一的抽象方法<code>makeFood</code>，且无参数、无返回值。如下：</p>
+<pre><code class="java">public interface Cook {
+    void makeFood();
+}
+</code></pre>
+<p>在下面的代码中，请使用Lambda的<strong>标准格式</strong>调用<code>invokeCook</code>方法，打印输出“吃饭啦！”字样：</p>
+<pre><code class="java">public class Demo05InvokeCook {
+    public static void main(String[] args) {
+        // TODO 请在此使用Lambda【标准格式】调用invokeCook方法
+    }
+
+    private static void invokeCook(Cook cook) {
+        cook.makeFood();
+    }
+}
+</code></pre>
+<h3><a href="#解答" id="解答">解答</a></h3>
+<pre><code class="java">public static void main(String[] args) {
+    invokeCook(() -&gt; {
+      	System.out.println(&quot;吃饭啦！&quot;);
+    });
+}
+</code></pre>
+<blockquote>
+    <p>备注：小括号代表<code>Cook</code>接口<code>makeFood</code>抽象方法的参数为空，大括号代表<code>makeFood</code>的方法体。</p>
+</blockquote>
+<h2><a href="#68-lambda的参数和返回值" id="68-lambda的参数和返回值">6.8 Lambda的参数和返回值</a></h2>
+<pre><code>需求:
+    使用数组存储多个Person对象
+    对数组中的Person对象使用Arrays的sort方法通过年龄进行升序排序
+</code></pre>
+<p>下面举例演示<code>java.util.Comparator&lt;T&gt;</code>接口的使用场景代码，其中的抽象方法定义为：</p>
+<ul>
+    <li><code>public abstract int compare(T o1, T o2);</code></li>
+</ul>
+<p>当需要对一个对象数组进行排序时，<code>Arrays.sort</code>方法需要一个<code>Comparator</code>接口实例来指定排序的规则。假设有一个<code>Person</code>类，含有<code>String name</code>和<code>int age</code>两个成员变量：</p>
+<pre><code class="java">public class Person {
+    private String name;
+    private int age;
+
+    // 省略构造器、toString方法与Getter Setter
+}
+</code></pre>
+<h3><a href="#传统写法" id="传统写法">传统写法</a></h3>
+<p>如果使用传统的代码对<code>Person[]</code>数组进行排序，写法如下：</p>
+<pre><code class="java">import java.util.Arrays;
+import java.util.Comparator;
+
+public class Demo06Comparator {
+    public static void main(String[] args) {
+      	// 本来年龄乱序的对象数组
+        Person[] array = {
+        	new Person(&quot;古力娜扎&quot;, 19),
+        	new Person(&quot;迪丽热巴&quot;, 18),
+       		new Person(&quot;马尔扎哈&quot;, 20) };
+
+      	// 匿名内部类
+        Comparator&lt;Person&gt; comp = new Comparator&lt;Person&gt;() {
+            @Override
+            public int compare(Person o1, Person o2) {
+                return o1.getAge() - o2.getAge();
+            }
+        };
+        Arrays.sort(array, comp); // 第二个参数为排序规则，即Comparator接口实例
+
+        for (Person person : array) {
+            System.out.println(person);
+        }
+    }
+}
+</code></pre>
+<p>这种做法在面向对象的思想中，似乎也是“理所当然”的。其中<code>Comparator</code>接口的实例（使用了匿名内部类）代表了“按照年龄从小到大”的排序规则。</p>
+<h3><a href="#代码分析" id="代码分析">代码分析</a></h3>
+<p>下面我们来搞清楚上述代码真正要做什么事情。</p>
+<ul>
+    <li>为了排序，<code>Arrays.sort</code>方法需要排序规则，即<code>Comparator</code>接口的实例，抽象方法<code>compare</code>是关键；</li>
+    <li>为了指定<code>compare</code>的方法体，<strong>不得不</strong>需要<code>Comparator</code>接口的实现类；</li>
+    <li>为了省去定义一个<code>ComparatorImpl</code>实现类的麻烦，<strong>不得不</strong>使用匿名内部类；</li>
+    <li>必须覆盖重写抽象<code>compare</code>方法，所以方法名称、方法参数、方法返回值<strong>不得不</strong>再写一遍，且不能写错；</li>
+    <li>实际上，<strong>只有参数和方法体才是关键</strong>。</li>
+</ul>
+<h3><a href="#lambda写法" id="lambda写法">Lambda写法</a></h3>
+<pre><code class="java">import java.util.Arrays;
+
+public class Demo07ComparatorLambda {
+    public static void main(String[] args) {
+        Person[] array = {
+          	new Person(&quot;古力娜扎&quot;, 19),
+          	new Person(&quot;迪丽热巴&quot;, 18),
+          	new Person(&quot;马尔扎哈&quot;, 20) };
+
+        Arrays.sort(array, (Person a, Person b) -&gt; {
+          	return a.getAge() - b.getAge();
+        });
+
+        for (Person person : array) {
+            System.out.println(person);
+        }
+    }
+}
+</code></pre>
+<h2><a href="#69-练习使用lambda标准格式有参有返回" id="69-练习使用lambda标准格式有参有返回">6.9 练习：使用Lambda标准格式（有参有返回）</a></h2>
+<h3><a href="#题目-1" id="题目-1">题目</a></h3>
+<p>给定一个计算器<code>Calculator</code>接口，内含抽象方法<code>calc</code>可以将两个int数字相加得到和值：</p>
+<pre><code class="java">public interface Calculator {
+    int calc(int a, int b);
+}
+</code></pre>
+<p>在下面的代码中，请使用Lambda的<strong>标准格式</strong>调用<code>invokeCalc</code>方法，完成120和130的相加计算：</p>
+<pre><code class="java">public class Demo08InvokeCalc {
+    public static void main(String[] args) {
+        // TODO 请在此使用Lambda【标准格式】调用invokeCalc方法来计算120+130的结果ß
+    }
+
+    private static void invokeCalc(int a, int b, Calculator calculator) {
+        int result = calculator.calc(a, b);
+        System.out.println(&quot;结果是：&quot; + result);
+    }
+}
+</code></pre>
+<h3><a href="#解答-1" id="解答-1">解答</a></h3>
+<pre><code class="java">public static void main(String[] args) {
+    invokeCalc(120, 130, (int a, int b) -&gt; {
+      	return a + b;
+    });
+}
+</code></pre>
+<blockquote>
+    <p>备注：小括号代表<code>Calculator</code>接口<code>calc</code>抽象方法的参数，大括号代表<code>calc</code>的方法体。</p>
+</blockquote>
+<h2><a href="#610-lambda省略格式" id="610-lambda省略格式">6.10 Lambda省略格式</a></h2>
+<h3><a href="#可推导即可省略" id="可推导即可省略">可推导即可省略</a></h3>
+<p>Lambda强调的是“做什么”而不是“怎么做”，所以凡是可以根据上下文推导得知的信息，都可以省略。例如上例还可以使用Lambda的省略写法：</p>
+<pre><code class="java">public static void main(String[] args) {
+  	invokeCalc(120, 130, (a, b) -&gt; a + b);
+}
+</code></pre>
+<h3><a href="#省略规则" id="省略规则">省略规则</a></h3>
+<p>在Lambda标准格式的基础上，使用省略写法的规则为：</p>
+<ol>
+    <li>小括号内参数的类型可以省略；</li>
+    <li>如果小括号内<strong>有且仅有一个参</strong>，则小括号可以省略；</li>
+    <li>如果大括号内<strong>有且仅有一个语句</strong>，则无论是否有返回值，都可以省略大括号、return关键字及语句分号。</li>
+</ol>
+<blockquote>
+    <p>备注：掌握这些省略规则后，请对应地回顾本章开头的多线程案例。</p>
+</blockquote>
+<h2><a href="#611-练习使用lambda省略格式" id="611-练习使用lambda省略格式">6.11 练习：使用Lambda省略格式</a></h2>
+<h3><a href="#题目-2" id="题目-2">题目</a></h3>
+<p>仍然使用前文含有唯一<code>makeFood</code>抽象方法的厨子<code>Cook</code>接口，在下面的代码中，请使用Lambda的<strong>省略格式</strong>调用<code>invokeCook</code>方法，打印输出“吃饭啦！”字样：</p>
+<pre><code class="java">public class Demo09InvokeCook {
+    public static void main(String[] args) {
+        // TODO 请在此使用Lambda【省略格式】调用invokeCook方法
+    }
+
+    private static void invokeCook(Cook cook) {
+        cook.makeFood();
+    }
+}
+</code></pre>
+<h3><a href="#解答-2" id="解答-2">解答</a></h3>
+<pre><code class="java">public static void main(String[] args) {
+  	invokeCook(() -&gt; System.out.println(&quot;吃饭啦！&quot;));
+}
+</code></pre>
+<h2><a href="#612-lambda的使用前提" id="612-lambda的使用前提">6.12 Lambda的使用前提</a></h2>
+<p>Lambda的语法非常简洁，完全没有面向对象复杂的束缚。但是使用时有几个问题需要特别注意：</p>
+<ol>
+    <li>使用Lambda必须具有接口，且要求<strong>接口中有且仅有一个抽象方法</strong>。
+        无论是JDK内置的<code>Runnable</code>、<code>Comparator</code>接口还是自定义的接口，只有当接口中的抽象方法存在且唯一时，才可以使用Lambda。</li>
+    <li>使用Lambda必须具有<strong>上下文推断</strong>。
+        也就是方法的参数或局部变量类型必须为Lambda对应的接口类型，才能使用Lambda作为该接口的实例。</li>
+</ol>
+<blockquote>
+    <p>备注：有且仅有一个抽象方法的接口，称为“<strong>函数式接口</strong>”。</p>
+</blockquote>
+<h1><a href="#第七章-stream流" id="第七章-stream流">第七章 Stream流</a></h1>
+<h2><a href="#11stream常用方法" id="11stream常用方法">1.1Stream常用方法</a></h2>
+<h4><a href="#111过滤filter" id="111过滤filter">1.1.1过滤：filter</a></h4>
+<p>现有如下需求：</p>
+<ul>
+    <li>筛选所有姓张的人。</li>
+    <li>然后筛选名字有三个字的人。</li>
+    <li>最后进行对结果进行打印输出。</li>
+</ul>
+<pre><code class="java">List&lt;String&gt; list = new ArrayList&lt;&gt;();
+list.add(&quot;张无忌&quot;);
+list.add(&quot;周芷若&quot;);
+list.add(&quot;赵敏&quot;);
+list.add(&quot;张强&quot;);
+list.add(&quot;张三丰&quot;);
+
+</code></pre>
+<p>方法一：jdk1.8以前的方案</p>
+<pre><code class="java">public class StreamDemo01 {
+    public static void main(String[] args){
+        // 使用传统方法实现
+        test01();
+    }
+
+    // 使用传统方法实现
+    public static void test01(){
+        List&lt;String&gt; list = new ArrayList&lt;&gt;();
+        list.add(&quot;张无忌&quot;);
+        list.add(&quot;周芷若&quot;);
+        list.add(&quot;赵敏&quot;);
+        list.add(&quot;张强&quot;);
+        list.add(&quot;张三丰&quot;);
+
+        // 使用传统方式实现
+        List&lt;String&gt; oneList = new ArrayList&lt;&gt;();
+        // 首先筛选所有姓张的人。
+        for(String name:list){
+            if(name.startsWith(&quot;张&quot;)){
+                oneList.add(name);
+            }
+        }
+        // 然后筛选名字有三个字的人。
+        List&lt;String&gt; twoList = new ArrayList&lt;&gt;();
+        for (String name: oneList) {
+            if (name.length() == 3){
+                twoList.add(name);
+            }
+        }
+        // 最后进行对结果进行打印输出。
+        for (String name:twoList) {
+            System.out.println(name);
+        }
+    }
+}
+</code></pre>
+<p>方法二：jdk1.8以后的方案</p>
+<pre><code class="java">public class StreamDemo01 {
+    public static void main(String[] args){
+        // 使用stream流实现
+        test02();
+    }
+
+    // 使用传统方法实现
+    public static void test02(){
+        List&lt;String&gt; list = new ArrayList&lt;&gt;();
+        list.add(&quot;张无忌&quot;);
+        list.add(&quot;周芷若&quot;);
+        list.add(&quot;赵敏&quot;);
+        list.add(&quot;张强&quot;);
+        list.add(&quot;张三丰&quot;);
+
+        //list转换成stream
+        Stream&lt;String&gt; stream = list.stream()
+                .filter(s -&gt; {
+                    System.out.println(&quot;过滤姓张的&quot;);
+                    return s.startsWith(&quot;张&quot;);
+                })
+                .filter(s -&gt; {
+                    System.out.println(&quot;过滤三个字的&quot;);
+                    return s.length() == 3;
+                });
+        //stream转换成list
+        List&lt;String&gt; list2 = stream.collect(Collectors.toList());
+        list2.stream().forEach(System.out::println);
+
+        //简写的方式
+        list.stream().filter(n -&gt; {
+            return n.startsWith(&quot;张&quot;) &amp;&amp; n.length() == 3;
+        }).forEach(System.out::println);
+
+    }
+}
+</code></pre>
+<p>直接阅读代码的字面意思即可完美展示无关逻辑方式的语义：**获取流、过滤姓张、过滤长度为3、逐一打印。</p>
+<h4><a href="#112-获取前几个limit" id="112-获取前几个limit">1.1.2 获取前几个：limit</a></h4>
+<pre><code class="java">        //获取stream中前2个元素
+        list.stream().limit(2).forEach(n -&gt; {
+            System.out.println(n);
+        });
+</code></pre>
+<h4><a href="#113跳过前几个skip" id="113跳过前几个skip">1.1.3跳过前几个：skip</a></h4>
+<pre><code class="java">       //跳过stream中前2个元素
+        list.stream().skip(2).forEach(n -&gt; {
+            System.out.println(n);
+        });
+</code></pre>
+<h4><a href="#114组合concat" id="114组合concat">1.1.4组合：concat</a></h4>
+<pre><code class="java">        // 将流a和流b拼接成一个新的流
+        Stream&lt;String&gt; cStream = Stream.concat(aStream, bStream);
+</code></pre>
+<h4><a href="#115-小结非终结方法与终结方法" id="115-小结非终结方法与终结方法">1.1.5 小结：非终结方法与终结方法</a></h4>
+<p>在上述介绍的各种方法中，凡是返回值仍然为<code>Stream</code>接口的为<strong>非终结方法(函数拼接方法)</strong>，它们支持链式调用；而返回值不再为<code>Stream</code>接口的为<strong>终结方法</strong>，不再支持链式调用。如下表所示：</p>
+<table>
+    <thead>
+    <tr><th> 方法名  </th><th> 方法作用   </th><th> 方法种类 </th><th> 是否支持链式调用 </th></tr>
+    </thead>
+    <tbody>
+    <tr><td> count   </td><td> 统计个数   </td><td> 终结     </td><td> 否               </td></tr>
+    <tr><td> forEach </td><td> 逐一处理   </td><td> 终结     </td><td> 否               </td></tr>
+    <tr><td> filter  </td><td> 过滤       </td><td> 函数拼接 </td><td> 是               </td></tr>
+    <tr><td> limit   </td><td> 取用前几个 </td><td> 函数拼接 </td><td> 是               </td></tr>
+    <tr><td> skip    </td><td> 跳过前几个 </td><td> 函数拼接 </td><td> 是               </td></tr>
+    <tr><td> map     </td><td> 映射       </td><td> 函数拼接 </td><td> 是               </td></tr>
+    <tr><td> concat  </td><td> 组合       </td><td> 函数拼接 </td><td> 是               </td></tr>
+    </tbody>
+</table>
+
+
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+1.请说出基本数据类型对应的八个包装类分别是什么？
+byte Byte
+short Short
+int Integer
+long Long
+float Float
+double Double
+char Character
+boolean Boolean
+2.请说出如何把字符串装换为对应的基本数据类型，有什么主意点？
+    除了Character类，其他七个包装类都可以
+    调用包装类型相应的parseXXX 静态方法将字符串参数装换为基本的数据类型
+
+3.请说出自动拆箱和自动装箱的理解
+    自动装箱本质上是调用包装类的静态方法 valueOf(),进行装箱
+    自动拆箱本质上是调用包装对象的xxxValue(),进行拆箱
+    由编译器自动完成
